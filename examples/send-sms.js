@@ -13,12 +13,14 @@ const client = new SmsFlowClient({
   baseUrl: process.env.SMSFLOW_BASE_URL,
 });
 
+const runId = `${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+
 const response = await client.sendSms({
   campaignName: "Node SDK sample",
   messages: [
     {
       destination,
-      content: "Your SMSFlow Node.js SDK test message was sent successfully.",
+      content: `Your SMSFlow Node.js SDK test message was sent successfully. Run ${runId}.`,
     },
   ],
 });
