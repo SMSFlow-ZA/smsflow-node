@@ -1,0 +1,25 @@
+{
+  "name": "@smsflow/smsflow",
+  "version": "0.1.0",
+  "description": "Node.js client library for the SMSFlow HTTPS API.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "example:send": "node examples/send-sms.js"
+  },
+  "keywords": [
+    "sms",
+    "sms-api",
+    "smsflow",
+    "notifications"
+  ],
+  "author": "SMSFlow",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18"
+  }
+}
