@@ -1,5 +1,5 @@
 {
-  "name": "@smsflow/smsflow",
+  "name": "smsflow",
   "version": "0.1.0",
   "description": "Node.js client library for the SMSFlow HTTPS API.",
   "type": "module",
@@ -18,7 +18,20 @@
     "notifications"
   ],
   "author": "SMSFlow",
-  "license": "UNLICENSED",
+  "license": "MIT",
+  "homepage": "https://docs.smsflow.co.za/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SMSFlow-ZA/smsflow-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SMSFlow-ZA/smsflow-node/issues"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
   "engines": {
     "node": ">=18"
   }

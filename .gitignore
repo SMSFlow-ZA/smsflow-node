@@ -3,5 +3,6 @@ node_modules/
 .env.*
 !.env.example
 coverage/
+.secrets/
 npm-debug.log*
 *.tgz

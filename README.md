@@ -1,15 +1,32 @@
 # SMSFlow Node.js SDK
 
-Draft public Node.js client for the SMSFlow HTTPS API.
+The SMSFlow Node.js SDK makes it easy to send SMS messages and check SMS credit balance from backend Node.js applications, Express APIs, workers, scheduled jobs, CRM integrations, and other server-side JavaScript systems.
+
+Documentation: https://docs.smsflow.co.za/
 
 ## Install
 
 Package publishing is not enabled yet. During development, reference this package locally.
 
+```bash
+npm install smsflow
+```
+
+## Configuration
+
+Store credentials in environment variables or your platform's secret manager.
+
+```bash
+SMSFLOW_CLIENT_ID=YOUR_CLIENT_ID
+SMSFLOW_CLIENT_SECRET=YOUR_CLIENT_SECRET
+```
+
+Do not use this SDK from browser-side JavaScript. SMSFlow Client Secrets must stay on the server.
+
 ## Usage
 
 ```javascript
-import { SmsFlowClient } from "@smsflow/smsflow";
+import { SmsFlowClient } from "smsflow";
 
 const client = new SmsFlowClient({
   clientId: process.env.SMSFLOW_CLIENT_ID,
@@ -29,6 +46,30 @@ const result = await client.sendSms({
 console.log(result.sendResponse?.eventId);
 ```
 
-## Safety
+## Features
+
+- Get and cache SMSFlow login tokens.
+- Send one or more SMS messages.
+- Schedule SMS messages using UTC delivery time.
+- Respect opt-out checks by default.
+- Check account balance.
+- Throw structured errors when the API returns an error.
+
+## Local test send
+
+This command sends a real SMS and may consume test credits:
+
+```bash
+SMSFLOW_CLIENT_ID=YOUR_CLIENT_ID \
+SMSFLOW_CLIENT_SECRET=YOUR_CLIENT_SECRET \
+SMSFLOW_DESTINATION=27000000000 \
+npm run example:send
+```
+
+## Security
 
 Use this SDK from server-side Node.js applications. Do not expose SMSFlow Client Secrets in browser-side JavaScript.
+
+## License
+
+MIT
