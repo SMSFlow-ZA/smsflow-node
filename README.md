@@ -6,10 +6,8 @@ Documentation: https://docs.smsflow.co.za/
 
 ## Install
 
-Package publishing is not enabled yet. During development, reference this package locally.
-
 ```bash
-npm install smsflow
+npm install @smsflow/smsflow
 ```
 
 ## Configuration
@@ -26,7 +24,7 @@ Do not use this SDK from browser-side JavaScript. SMSFlow Client Secrets must st
 ## Usage
 
 ```javascript
-import { SmsFlowClient } from "smsflow";
+import { SmsFlowClient } from "@smsflow/smsflow";
 
 const client = new SmsFlowClient({
   clientId: process.env.SMSFLOW_CLIENT_ID,

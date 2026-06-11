@@ -1,5 +1,5 @@
 {
-  "name": "smsflow",
+  "name": "@smsflow/smsflow",
   "version": "0.1.0",
   "description": "Node.js client library for the SMSFlow HTTPS API.",
   "type": "module",
@@ -32,6 +32,9 @@
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18"
   }
