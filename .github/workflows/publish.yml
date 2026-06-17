@@ -17,6 +17,18 @@ jobs:
           node-version: 22.x
           registry-url: https://registry.npmjs.org
       - run: npm test
+      - id: package
+        run: |
+          echo "version=$(node -p 'JSON.parse(require("fs").readFileSync("package.json", "utf8")).version')" >> "$GITHUB_OUTPUT"
+      - id: published
+        run: |
+          if npm view "@smsflow/smsflow@${{ steps.package.outputs.version }}" version >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "@smsflow/smsflow@${{ steps.package.outputs.version }} is already published."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
       - run: npm publish --access public
+        if: steps.published.outputs.exists != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
