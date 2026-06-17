@@ -1,5 +1,9 @@
 # SMSFlow Node.js SDK
 
+[![npm version](https://img.shields.io/npm/v/@smsflow/smsflow.svg)](https://www.npmjs.com/package/@smsflow/smsflow)
+[![CI](https://github.com/SMSFlow-ZA/smsflow-node/actions/workflows/ci.yml/badge.svg)](https://github.com/SMSFlow-ZA/smsflow-node/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 The SMSFlow Node.js SDK makes it easy to send SMS messages and check SMS credit balance from backend Node.js applications, Express APIs, workers, scheduled jobs, CRM integrations, and other server-side JavaScript systems.
 
 Documentation: https://docs.smsflow.co.za/
@@ -43,6 +47,49 @@ const result = await client.sendSms({
 
 console.log(result.sendResponse?.eventId);
 ```
+
+## Bulk send
+
+```javascript
+await client.sendSms({
+  campaignName: "Order dispatch alerts",
+  messages: [
+    { destination: "27000000000", content: "Order 1001 has shipped." },
+    { destination: "27000000001", content: "Order 1002 has shipped." },
+  ],
+});
+```
+
+## Check balance
+
+```javascript
+const balance = await client.getBalance();
+console.log(balance.balance);
+```
+
+## Error handling
+
+```javascript
+import { SmsFlowClient, SmsFlowError } from "@smsflow/smsflow";
+
+try {
+  await client.sendSms({
+    campaignName: "Transactional SMS",
+    messages: [{ destination: "27000000000", content: "Hello from SMSFlow." }],
+  });
+} catch (error) {
+  if (error instanceof SmsFlowError) {
+    console.error(error.status, error.body);
+  }
+  throw error;
+}
+```
+
+## Timeouts and retries
+
+Use this SDK from server-side code with your normal job queue, retry, and observability tooling. For advanced timeout behavior, pass a custom `fetchImpl` that applies your preferred timeout policy.
+
+Retry only temporary network failures and `5xx` responses. Do not retry validation errors, authentication failures, or insufficient-balance responses until the underlying issue has been fixed. Store the returned `eventId` against your own transaction or notification record.
 
 ## Features
 
