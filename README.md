@@ -33,6 +33,7 @@ import { SmsFlowClient } from "@smsflow/smsflow";
 const client = new SmsFlowClient({
   clientId: process.env.SMSFLOW_CLIENT_ID,
   clientSecret: process.env.SMSFLOW_CLIENT_SECRET,
+  timeoutMs: 30000,
 });
 
 const result = await client.sendSms({
@@ -70,7 +71,12 @@ console.log(balance.balance);
 ## Error handling
 
 ```javascript
-import { SmsFlowClient, SmsFlowError } from "@smsflow/smsflow";
+import {
+  SmsFlowAuthenticationError,
+  SmsFlowClient,
+  SmsFlowError,
+  SmsFlowValidationError,
+} from "@smsflow/smsflow";
 
 try {
   await client.sendSms({
@@ -78,8 +84,12 @@ try {
     messages: [{ destination: "27000000000", content: "Hello from SMSFlow." }],
   });
 } catch (error) {
-  if (error instanceof SmsFlowError) {
-    console.error(error.status, error.body);
+  if (error instanceof SmsFlowAuthenticationError) {
+    console.error("Check your SMSFlow Client ID and Client Secret.");
+  } else if (error instanceof SmsFlowValidationError) {
+    console.error("Fix the request before retrying.", error.code, error.body);
+  } else if (error instanceof SmsFlowError) {
+    console.error(error.status, error.code, error.retryable, error.body);
   }
   throw error;
 }
@@ -87,9 +97,30 @@ try {
 
 ## Timeouts and retries
 
-Use this SDK from server-side code with your normal job queue, retry, and observability tooling. For advanced timeout behavior, pass a custom `fetchImpl` that applies your preferred timeout policy.
+Set a request timeout and opt in to retries when your application can safely handle them:
 
-Retry only temporary network failures and `5xx` responses. Do not retry validation errors, authentication failures, or insufficient-balance responses until the underlying issue has been fixed. Store the returned `eventId` against your own transaction or notification record.
+```javascript
+const client = new SmsFlowClient({
+  clientId: process.env.SMSFLOW_CLIENT_ID,
+  clientSecret: process.env.SMSFLOW_CLIENT_SECRET,
+  timeoutMs: 30000,
+  retry: { retries: 2, baseDelayMs: 250, maxDelayMs: 2000 },
+});
+
+const balance = await client.getBalance(); // Safe to retry temporary failures.
+
+await client.sendSms({
+  campaignName: "Transactional SMS",
+  retry: true, // Use only with your own idempotency or duplicate-send guard.
+  messages: [{ destination: "27000000000", content: "Hello from SMSFlow." }],
+});
+```
+
+Retry only temporary network failures, `408`, `429`, and `5xx` responses. Do not retry validation errors, authentication failures, or insufficient-balance responses until the underlying issue has been fixed. Store the returned `eventId` against your own transaction or notification record.
+
+## Delivery status
+
+The public HTTPS API currently exposes authentication, send, and balance endpoints. Delivery-status helper methods will be added when a public delivery-status endpoint is available.
 
 ## Features
 
@@ -98,7 +129,8 @@ Retry only temporary network failures and `5xx` responses. Do not retry validati
 - Schedule SMS messages using UTC delivery time.
 - Respect opt-out checks by default.
 - Check account balance.
-- Throw structured errors when the API returns an error.
+- Throw typed structured errors when the API returns an error.
+- Configure timeouts and opt-in retries for temporary failures.
 
 ## Local test send
 
