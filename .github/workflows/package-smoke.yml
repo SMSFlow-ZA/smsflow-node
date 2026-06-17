@@ -1,0 +1,28 @@
+name: Package smoke test
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Publish npm package"]
+    types: [completed]
+
+jobs:
+  smoke:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          registry-url: https://registry.npmjs.org
+      - id: package
+        run: |
+          echo "version=$(node -p 'JSON.parse(require("fs").readFileSync("package.json", "utf8")).version')" >> "$GITHUB_OUTPUT"
+      - run: |
+          mkdir smoke
+          cd smoke
+          npm init -y
+          npm install "@smsflow/smsflow@${{ steps.package.outputs.version }}"
+          node -e "import('@smsflow/smsflow').then(m => { if (!m.SmsFlowClient) throw new Error('SmsFlowClient export missing'); })"
+
